@@ -1,6 +1,11 @@
 {
-    "extends": "zt/base",
-    "env": {
-        "jest": true
-    }
+  "env": {
+    "jest": true
+  },
+  "parser": "babel-eslint",
+  "parserOptions": {
+      "ecmaFeatures": {
+        "modules": true
+      }
+  }
 }
