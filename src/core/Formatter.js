@@ -35,6 +35,12 @@ export default class Formatter {
         return formattedQuery.trim();
     }
 
+    reservedWord(word) {
+        if (this.cfg.reservedWordCase === 'upper') return word.toUpperCase();
+        if (this.cfg.reservedWordCase === 'lower') return word.toLowerCase();
+        return word;
+    }
+
     getFormattedQueryFromTokens() {
         let formattedQuery = "";
 
@@ -109,12 +115,12 @@ export default class Formatter {
 
         this.indentation.increaseToplevel();
 
-        query += this.equalizeWhitespace(token.value);
+        query += this.equalizeWhitespace(this.reservedWord(token.value));
         return this.addNewline(query);
     }
 
     formatNewlineReservedWord(token, query) {
-        return this.addNewline(query) + this.equalizeWhitespace(token.value) + " ";
+        return this.addNewline(query) + this.equalizeWhitespace(this.reservedWord(token.value)) + " ";
     }
 
     // Replace any sequence of whitespace characters with single space
