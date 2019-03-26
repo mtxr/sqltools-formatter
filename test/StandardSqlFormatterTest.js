@@ -3,6 +3,7 @@ import behavesLikeSqlFormatter from "./behavesLikeSqlFormatter";
 
 describe("StandardSqlFormatter", function() {
     behavesLikeSqlFormatter();
+    behavesLikeSqlFormatter('sql');
 
     it("formats short CREATE TABLE", function() {
         expect(sqlFormatter.format(

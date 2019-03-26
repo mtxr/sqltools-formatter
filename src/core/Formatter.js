@@ -12,7 +12,7 @@ export default class Formatter {
      * @param {Tokenizer} tokenizer
      */
     constructor(cfg, tokenizer) {
-        this.cfg = cfg || {};
+        this.cfg = cfg;
         this.indentation = new Indentation(this.cfg.indent);
         this.inlineBlock = new InlineBlock();
         this.params = new Params(this.cfg.params);

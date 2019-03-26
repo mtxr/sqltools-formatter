@@ -457,12 +457,64 @@ export default function behavesLikeSqlFormatter(language) {
             "  count(*),\n" +
             "  Column1\n" +
             "FROM\n" +
-            "  Table1;\n" + 
+            "  Table1;\n" +
             "SELECT\n" +
             "  count(*),\n" +
             "  Column1\n" +
             "FROM\n" +
             "  Table2;"
+        );
+    });
+
+    it("keeps reserved words case", function() {
+        expect(format("foo;bar;")).toBe("foo;\nbar;");
+        expect(format("foo\n;bar;")).toBe("foo;\nbar;");
+        expect(format("foo\n\n\n;bar;\n\n")).toBe("foo;\nbar;");
+
+        const result = sqlFormatter.format("select count(*),Column1 FROM Table1;\nSELECT count(*),Column1 from Table2;");
+        expect(result).toBe(
+            "select\n" +
+            "  count(*),\n" +
+            "  Column1\n" +
+            "FROM\n" +
+            "  Table1;\n" +
+            "SELECT\n" +
+            "  count(*),\n" +
+            "  Column1\n" +
+            "from\n" +
+            "  Table2;"
+        );
+    });
+
+    it("change reserved words case to upper", function() {
+        const result = sqlFormatter.format("select count(*),column1 from table1;\nselect count(*),column1 from table2;", { reservedWordCase: 'upper' });
+        expect(result).toBe(
+            "SELECT\n" +
+            "  count(*),\n" +
+            "  column1\n" +
+            "FROM\n" +
+            "  table1;\n" +
+            "SELECT\n" +
+            "  count(*),\n" +
+            "  column1\n" +
+            "FROM\n" +
+            "  table2;"
+        );
+    });
+
+    it("change reserved words case to lower", function() {
+        const result = sqlFormatter.format("SELECT count(*),column1 FROM table1;\nSELECT count(*),column1 FROM table2;", { reservedWordCase: 'lower' });
+        expect(result).toBe(
+            "select\n" +
+            "  count(*),\n" +
+            "  column1\n" +
+            "from\n" +
+            "  table1;\n" +
+            "select\n" +
+            "  count(*),\n" +
+            "  column1\n" +
+            "from\n" +
+            "  table2;"
         );
     });
 }
