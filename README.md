@@ -2,4 +2,4 @@
 
 > Forked from [zeroturnaround/sql-formatter](https://zeroturnaround.github.io/sql-formatter/)
 
-This package is a part of [vscode-sqltools](https://github.com/mtxr/vscode-sqltools) extension.
+This package is part of [vscode-sqltools](https://github.com/mtxr/vscode-sqltools) extension.

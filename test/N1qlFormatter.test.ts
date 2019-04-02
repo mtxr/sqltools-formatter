@@ -1,4 +1,4 @@
-import sqlFormatter from "./../src/sqlFormatter";
+import sqlFormatter from "../src/sqlFormatter";
 import behavesLikeSqlFormatter from "./behavesLikeSqlFormatter";
 
 describe("N1qlFormatter", function() {

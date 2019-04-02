@@ -1,9 +1,9 @@
 module.exports = {
-  // preset: 'ts-jest',
+  preset: 'ts-jest',
   testEnvironment: 'node',
   collectCoverage: true,
-  collectCoverageFrom: ['**/*.ts', '**/*.js'],
-  coverageDirectory: '<rootDir>/../../coverage/formatter',
+  collectCoverageFrom: ['**/*.ts'],
+  coverageDirectory: '<rootDir>/coverage',
   coveragePathIgnorePatterns: ['/node_modules/', '/coverage/'],
   coverageThreshold: {
     global: {
@@ -14,5 +14,5 @@ module.exports = {
     },
   },
   roots: ['test'],
-  testRegex: ['.*Test\.(js|ts)'],
+  testMatch: ['**/*.test.(ts)'],
 };

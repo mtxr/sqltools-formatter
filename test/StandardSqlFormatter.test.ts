@@ -1,4 +1,4 @@
-import sqlFormatter from "./../src/sqlFormatter";
+import sqlFormatter from "../src/sqlFormatter";
 import behavesLikeSqlFormatter from "./behavesLikeSqlFormatter";
 
 describe("StandardSqlFormatter", function() {
@@ -375,9 +375,10 @@ describe("StandardSqlFormatter", function() {
 
     it("formats line comments followed by close-paren", function() {
         expect(sqlFormatter.format("SELECT ( a --comment\n )")).toBe(
-            "SELECT\n" +
-            "  (a --comment\n" +
-            ")"
+`SELECT
+  (
+    a --comment
+  )`
         );
     });
 
