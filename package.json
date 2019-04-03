@@ -28,11 +28,11 @@
   "scripts": {
     "clean": "rimraf lib dist",
     "test": "jest --config jest.config.js",
-    "test:watch": "npm run test -- --watch",
-    "check": "npm run test",
-    "prebuild": "npm run clean",
-    "build": "tsc -p tsconfig.json",
-    "prepublish": "npm run clean && npm run check && npm run build"
+    "test:watch": "yarn run test -- --watch",
+    "check": "yarn run test",
+    "precompile": "yarn run check && yarn run clean",
+    "compile": "./node_modules/.bin/tsc -p tsconfig.json",
+    "build": "yarn run compile"
   },
   "repository": {
     "type": "git",
