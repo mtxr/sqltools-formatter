@@ -8,7 +8,7 @@ env:
   - HUSKY_SKIP_INSTALL=true
 
 install:
-  - npm install
+  - yarn
 script:
-  - npm run check
-  - npm run build
+  - yarn run check
+  - yarn run build
