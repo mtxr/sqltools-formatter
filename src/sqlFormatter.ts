@@ -41,8 +41,6 @@ export default {
    * @return {Token[]}
    */
   tokenize: (query: string, cfg: Config = {}): Token[] => {
-    cfg = cfg || {};
-
     switch (cfg.language) {
       case 'db2':
         return new Db2Formatter(cfg).tokenize(query);

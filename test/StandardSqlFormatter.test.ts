@@ -410,6 +410,19 @@ describe('StandardSqlFormatter tokenizer', function() {
     ]);
   });
 
+  it('tokenizes tricky line comments using sql as language', function() {
+    expect(sqlFormatter.tokenize('SELECT a#comment, here\nFROM h.b--comment', { language: 'sql' })).toEqual([
+      { type: 'reserved-toplevel', value: 'SELECT' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'word', value: 'a' },
+      { type: 'line-comment', value: '#comment, here\n' },
+      { type: 'reserved-toplevel', value: 'FROM' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'tablename', value: 'h.b' },
+      { type: 'line-comment', value: '--comment' },
+    ]);
+  });
+
   it('tokenize SELECT query with OUTER APPLY', function() {
     const result = sqlFormatter.tokenize('SELECT a, b FROM t OUTER APPLY fn(t.id)');
     expect(result).toEqual([

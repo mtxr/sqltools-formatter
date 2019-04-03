@@ -298,3 +298,20 @@ describe("PlSqlFormatter", function() {
         );
     });
 });
+
+describe('PlSqlFormatter tokenizer', () => {
+  it('tokenizes simple select', function() {
+    const result = sqlFormatter.tokenize('SELECT col FROM\n' + 'MyTable;\n', { language: 'pl/sql' });
+    expect(result).toEqual([
+      { type: 'reserved-toplevel', value: 'SELECT' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'word', value: 'col' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'reserved-toplevel', value: 'FROM' },
+      { type: 'whitespace', value: '\n' },
+      { type: 'tablename', value: 'MyTable' },
+      { type: 'operator', value: ';' },
+      { type: 'whitespace', value: '\n' },
+    ]);
+  });
+});

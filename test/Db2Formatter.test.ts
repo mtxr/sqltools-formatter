@@ -68,3 +68,20 @@ describe("Db2Formatter", function() {
         );
     });
 });
+
+describe('Db2Formatter tokenizer', () => {
+  it('tokenizes simple select', function() {
+    const result = sqlFormatter.tokenize('SELECT col FROM\n' + 'MyTable;\n', { language: 'db2' });
+    expect(result).toEqual([
+      { type: 'reserved-toplevel', value: 'SELECT' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'word', value: 'col' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'reserved-toplevel', value: 'FROM' },
+      { type: 'whitespace', value: '\n' },
+      { type: 'tablename', value: 'MyTable' },
+      { type: 'operator', value: ';' },
+      { type: 'whitespace', value: '\n' },
+    ]);
+  });
+});

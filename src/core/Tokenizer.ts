@@ -1,6 +1,6 @@
 import isEmpty from 'lodash/isEmpty';
 import escapeRegExp from 'lodash/escapeRegExp';
-import { TokenTypes, Token } from './types';
+import { TokenTypes, Token, TokenizerConfig } from './types';
 
 export default class Tokenizer {
   public WHITESPACE_REGEX: RegExp;
@@ -12,7 +12,8 @@ export default class Tokenizer {
   public RESERVED_NEWLINE_REGEX: RegExp;
   public RESERVED_PLAIN_REGEX: RegExp;
   public WORD_REGEX: RegExp;
-  public TABLE_REGEX: RegExp;
+  public TABLE_NAME_REGEX: RegExp;
+  public TABLE_NAME_PREFIX_REGEX: RegExp;
   public STRING_REGEX: RegExp;
   public OPEN_PAREN_REGEX: RegExp;
   public CLOSE_PAREN_REGEX: RegExp;
@@ -21,7 +22,7 @@ export default class Tokenizer {
   public STRING_NAMED_PLACEHOLDER_REGEX: RegExp;
 
   /**
-   * @param {Config} cfg
+   * @param {TokenizerConfig} cfg
    *  @param {string[]} cfg.reservedWords Reserved words in SQL
    *  @param {string[]} cfg.reservedToplevelWords Words that are set to new line separately
    *  @param {string[]} cfg.reservedNewlineWords Words that are set to newline
@@ -33,7 +34,7 @@ export default class Tokenizer {
    *  @param {string[]} cfg.lineCommentTypes Line comments to enable, like # and --
    *  @param {string[]} cfg.specialWordChars Special chars that can be found inside of words, like @ and #
    */
-  constructor(cfg) {
+  constructor(cfg: TokenizerConfig) {
     this.WHITESPACE_REGEX = /^(\s+)/;
     this.NUMBER_REGEX = /^((-\s*)?[0-9]+(\.[0-9]+)?|0x[0-9a-fA-F]+|0b[01]+)\b/;
     this.OPERATOR_REGEX = /^(!=|<>|==|<=|>=|!<|!>|\|\||::|->>|->|~~\*|~~|!~~\*|!~~|~\*|!~\*|!~|.)/;
@@ -44,9 +45,10 @@ export default class Tokenizer {
     this.RESERVED_TOPLEVEL_REGEX = this.createReservedWordRegex(cfg.reservedToplevelWords);
     this.RESERVED_NEWLINE_REGEX = this.createReservedWordRegex(cfg.reservedNewlineWords);
     this.RESERVED_PLAIN_REGEX = this.createReservedWordRegex(cfg.reservedWords);
+    this.TABLE_NAME_PREFIX_REGEX = this.createReservedWordRegex(cfg.tableNamePrefixWords);
 
     this.WORD_REGEX = this.createWordRegex(cfg.specialWordChars);
-    this.TABLE_REGEX = /([a-z][\w\.]*|[\[`][a-z][\w\. \-]*[\]`])/i;
+    this.TABLE_NAME_REGEX = /([a-z][\w\.]*|[\[`][a-z][\w\. \-]*[\]`])/i;
     this.STRING_REGEX = this.createStringRegex(cfg.stringTypes);
 
     this.OPEN_PAREN_REGEX = this.createParenRegex(cfg.openParens);
@@ -134,7 +136,7 @@ export default class Tokenizer {
     // Keep processing the string until it is empty
     while (input.length) {
       // Get the next token and the token type
-      token = this.getNextToken(input, tokens[tokens.length - 1], tokens[tokens.length - 2]);
+      token = this.getNextToken(input, this.getPreviousToken(tokens), this.getPreviousToken(tokens, 1));
       // Advance the string
       input = input.substring(token.value.length);
 
@@ -288,15 +290,14 @@ export default class Tokenizer {
     if (tokenMinus1 && tokenMinus1.value && tokenMinus1.value.trim() !== '') {
       return;
     }
-    const prefix = this.createReservedWordRegex(['FROM']); // @TODO add prefix as a configuration
-    if (tokenMinus2 && tokenMinus2.value && !prefix.test(tokenMinus2.value)) {
+    if (tokenMinus2 && tokenMinus2.value && !this.TABLE_NAME_PREFIX_REGEX.test(tokenMinus2.value)) {
       return;
     }
 
     return this.getTokenOnFirstMatch({
       input,
       type: TokenTypes.TABLENAME,
-      regex: this.TABLE_REGEX,
+      regex: this.TABLE_NAME_REGEX,
     });
   }
 
@@ -338,5 +339,9 @@ export default class Tokenizer {
     if (matches) {
       return { type, value: matches[1] };
     }
+  }
+
+  getPreviousToken(tokens: Token[], offset = 0) {
+    return tokens[tokens.length - offset - 1] || { value: null, type: null };
   }
 }

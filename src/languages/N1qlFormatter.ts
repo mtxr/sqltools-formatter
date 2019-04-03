@@ -36,10 +36,28 @@ function getTokenizer(): Tokenizer {
       closeParens: [')', ']', '}'],
       namedPlaceholderTypes: ['$'],
       lineCommentTypes: ['#', '--'],
+      tableNamePrefixWords,
     });
   }
   return tokenizer;
 }
+
+const tableNamePrefixWords = [
+  'UPDATE',
+  'EXPLAIN DELETE FROM',
+  'DELETE FROM',
+  'FROM',
+  'INNER JOIN',
+  'LEFT JOIN',
+  'LEFT OUTER JOIN',
+  'OUTER JOIN',
+  'RIGHT JOIN',
+  'RIGHT OUTER JOIN',
+  'JOIN',
+  'INSERT INTO',
+  'INSERT',
+  'ALTER',
+];
 
 const reservedWords = [
   'ALL',

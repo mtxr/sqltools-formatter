@@ -37,10 +37,28 @@ function getTokenizer(): Tokenizer {
       indexedPlaceholderTypes: ['?'],
       namedPlaceholderTypes: ['@', ':'],
       lineCommentTypes: ['#', '--'],
+      tableNamePrefixWords,
     });
   }
   return tokenizer;
 }
+
+const tableNamePrefixWords = [
+  'UPDATE',
+  'DELETE FROM',
+  'FROM',
+  'CROSS JOIN',
+  'INNER JOIN',
+  'LEFT JOIN',
+  'LEFT OUTER JOIN',
+  'OUTER JOIN',
+  'RIGHT JOIN',
+  'RIGHT OUTER JOIN',
+  'JOIN',
+  'INSERT INTO',
+  'INSERT',
+  'ALTER TABLE',
+]
 
 const reservedWords = [
   'ACCESSIBLE',
