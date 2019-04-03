@@ -15,6 +15,7 @@ export enum TokenTypes {
   BLOCK_COMMENT = 'block-comment',
   NUMBER = 'number',
   PLACEHOLDER = 'placeholder',
+  TABLENAME = 'tablename',
 }
 export interface Config {
   language?: string;

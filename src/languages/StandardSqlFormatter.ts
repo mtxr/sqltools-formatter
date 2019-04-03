@@ -1,6 +1,6 @@
 import Formatter from '../core/Formatter';
 import Tokenizer from '../core/Tokenizer';
-import { Config } from '../core/types';
+import { Config, Token } from '../core/types';
 
 let tokenizer: Tokenizer;
 
@@ -17,21 +17,29 @@ export default class StandardSqlFormatter {
    * @return {String} formatted string
    */
   format(query) {
-    if (!tokenizer) {
-      tokenizer = new Tokenizer({
-        reservedWords,
-        reservedToplevelWords,
-        reservedNewlineWords,
-        stringTypes: [`""`, "N''", "''", '``', '[]'],
-        openParens: ['(', 'CASE'],
-        closeParens: [')', 'END'],
-        indexedPlaceholderTypes: ['?'],
-        namedPlaceholderTypes: ['@', ':'],
-        lineCommentTypes: ['#', '--'],
-      });
-    }
-    return new Formatter(this.cfg, tokenizer).format(query);
+    return new Formatter(this.cfg, getTokenizer()).format(query);
   }
+
+  tokenize(query): Token[] {
+    return getTokenizer().tokenize(query);
+  }
+}
+
+function getTokenizer(): Tokenizer {
+  if (!tokenizer) {
+    tokenizer = new Tokenizer({
+      reservedWords,
+      reservedToplevelWords,
+      reservedNewlineWords,
+      stringTypes: [`""`, "N''", "''", '``', '[]'],
+      openParens: ['(', 'CASE'],
+      closeParens: [')', 'END'],
+      indexedPlaceholderTypes: ['?'],
+      namedPlaceholderTypes: ['@', ':'],
+      lineCommentTypes: ['#', '--'],
+    });
+  }
+  return tokenizer;
 }
 
 const reservedWords = [

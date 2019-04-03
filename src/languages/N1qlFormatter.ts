@@ -1,6 +1,45 @@
 import Formatter from '../core/Formatter';
 import Tokenizer from '../core/Tokenizer';
-import { Config } from '../core/types';
+import { Config, Token } from '../core/types';
+
+let tokenizer: Tokenizer;
+
+export default class N1qlFormatter {
+  /**
+   * @param {Config} cfg Different set of configurations
+   */
+  constructor(public cfg: Config) {}
+
+  /**
+   * Format the whitespace in a N1QL string to make it easier to read
+   *
+   * @param {String} query The N1QL string
+   * @return {String} formatted string
+   */
+  format(query) {
+    return new Formatter(this.cfg, getTokenizer()).format(query);
+  }
+
+  tokenize(query): Token[] {
+    return getTokenizer().tokenize(query);
+  }
+}
+
+function getTokenizer(): Tokenizer {
+  if (!tokenizer) {
+    tokenizer = new Tokenizer({
+      reservedWords,
+      reservedToplevelWords,
+      reservedNewlineWords,
+      stringTypes: [`""`, "''", '``'],
+      openParens: ['(', '[', '{'],
+      closeParens: [')', ']', '}'],
+      namedPlaceholderTypes: ['$'],
+      lineCommentTypes: ['#', '--'],
+    });
+  }
+  return tokenizer;
+}
 
 const reservedWords = [
   'ALL',
@@ -222,34 +261,3 @@ const reservedNewlineWords = [
   'RIGHT OUTER JOIN',
   'XOR',
 ];
-
-let tokenizer: Tokenizer;
-
-export default class N1qlFormatter {
-  /**
-   * @param {Config} cfg Different set of configurations
-   */
-  constructor(public cfg: Config) {}
-
-  /**
-   * Format the whitespace in a N1QL string to make it easier to read
-   *
-   * @param {String} query The N1QL string
-   * @return {String} formatted string
-   */
-  format(query) {
-    if (!tokenizer) {
-      tokenizer = new Tokenizer({
-        reservedWords,
-        reservedToplevelWords,
-        reservedNewlineWords,
-        stringTypes: [`""`, "''", '``'],
-        openParens: ['(', '[', '{'],
-        closeParens: [')', ']', '}'],
-        namedPlaceholderTypes: ['$'],
-        lineCommentTypes: ['#', '--'],
-      });
-    }
-    return new Formatter(this.cfg, tokenizer).format(query);
-  }
-}
