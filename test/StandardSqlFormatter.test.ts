@@ -394,3 +394,57 @@ describe("StandardSqlFormatter", function() {
         expect(sqlFormatter.format(";")).toBe(";");
     });
 });
+
+// @TODO improve this tests
+describe('StandardSqlFormatter tokenizer', function() {
+  it('tokenizes tricky line comments', function() {
+    expect(sqlFormatter.tokenize('SELECT a#comment, here\nFROM h.b--comment')).toEqual([
+      { type: 'reserved-toplevel', value: 'SELECT' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'word', value: 'a' },
+      { type: 'line-comment', value: '#comment, here\n' },
+      { type: 'reserved-toplevel', value: 'FROM' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'tablename', value: 'h.b' },
+      { type: 'line-comment', value: '--comment' },
+    ]);
+  });
+
+  it('tokenizes tricky line comments using sql as language', function() {
+    expect(sqlFormatter.tokenize('SELECT a#comment, here\nFROM h.b--comment', { language: 'sql' })).toEqual([
+      { type: 'reserved-toplevel', value: 'SELECT' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'word', value: 'a' },
+      { type: 'line-comment', value: '#comment, here\n' },
+      { type: 'reserved-toplevel', value: 'FROM' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'tablename', value: 'h.b' },
+      { type: 'line-comment', value: '--comment' },
+    ]);
+  });
+
+  it('tokenize SELECT query with OUTER APPLY', function() {
+    const result = sqlFormatter.tokenize('SELECT a, b FROM t OUTER APPLY fn(t.id)');
+    expect(result).toEqual([
+      { type: 'reserved-toplevel', value: 'SELECT' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'word', value: 'a' },
+      { type: 'operator', value: ',' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'word', value: 'b' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'reserved-toplevel', value: 'FROM' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'tablename', value: 't' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'reserved-newline', value: 'OUTER APPLY' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'word', value: 'fn' },
+      { type: 'open-paren', value: '(' },
+      { type: 'word', value: 't' },
+      { type: 'operator', value: '.' },
+      { type: 'word', value: 'id' },
+      { type: 'close-paren', value: ')' },
+    ]);
+  });
+});

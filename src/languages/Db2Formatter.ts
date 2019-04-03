@@ -1,6 +1,6 @@
 import Formatter from '../core/Formatter';
 import Tokenizer from '../core/Tokenizer';
-import { Config } from '../core/types';
+import { Config, Token } from '../core/types';
 
 let tokenizer: Tokenizer;
 
@@ -17,23 +17,49 @@ export default class Db2Formatter {
    * @return {String} formatted string
    */
   format(query) {
-    if (!tokenizer) {
-      tokenizer = new Tokenizer({
-        reservedWords,
-        reservedToplevelWords,
-        reservedNewlineWords,
-        stringTypes: [`""`, "''", '``', '[]'],
-        openParens: ['('],
-        closeParens: [')'],
-        indexedPlaceholderTypes: ['?'],
-        namedPlaceholderTypes: [':'],
-        lineCommentTypes: ['--'],
-        specialWordChars: ['#', '@'],
-      });
-    }
-    return new Formatter(this.cfg, tokenizer).format(query);
+    return new Formatter(this.cfg, getTokenizer()).format(query);
+  }
+
+  tokenize(query): Token[] {
+    return getTokenizer().tokenize(query);
   }
 }
+
+function getTokenizer(): Tokenizer {
+  if (!tokenizer) {
+    tokenizer = new Tokenizer({
+      reservedWords,
+      reservedToplevelWords,
+      reservedNewlineWords,
+      stringTypes: [`""`, "''", '``', '[]'],
+      openParens: ['('],
+      closeParens: [')'],
+      indexedPlaceholderTypes: ['?'],
+      namedPlaceholderTypes: [':'],
+      lineCommentTypes: ['--'],
+      specialWordChars: ['#', '@'],
+      tableNamePrefixWords
+    });
+  }
+  return tokenizer;
+}
+
+const tableNamePrefixWords = [
+  'UPDATE',
+  'DELETE FROM',
+  'FROM',
+  'CROSS JOIN',
+  'INNER JOIN',
+  'LEFT JOIN',
+  'LEFT OUTER JOIN',
+  'OUTER JOIN',
+  'RIGHT JOIN',
+  'RIGHT OUTER JOIN',
+  'JOIN',
+  'INSERT INTO',
+  'INSERT',
+  'ALTER TABLE',
+];
 
 const reservedWords = [
   'ABS',

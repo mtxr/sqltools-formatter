@@ -183,3 +183,24 @@ describe("N1qlFormatter", function() {
         );
     });
 });
+
+describe('N1qlFormatter tokenizer', () => {
+  it('formats SELECT query with element selection expression', function() {
+    const result = sqlFormatter.tokenize('SELECT orderlines[0].productId FROM orders;', { language: 'n1ql' });
+    expect(result).toEqual([
+      { type: 'reserved-toplevel', value: 'SELECT' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'word', value: 'orderlines' },
+      { type: 'open-paren', value: '[' },
+      { type: 'number', value: '0' },
+      { type: 'close-paren', value: ']' },
+      { type: 'operator', value: '.' },
+      { type: 'word', value: 'productId' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'reserved-toplevel', value: 'FROM' },
+      { type: 'whitespace', value: ' ' },
+      { type: 'tablename', value: 'orders' },
+      { type: 'operator', value: ';' },
+    ]);
+  });
+});

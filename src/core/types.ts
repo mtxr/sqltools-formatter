@@ -15,12 +15,26 @@ export enum TokenTypes {
   BLOCK_COMMENT = 'block-comment',
   NUMBER = 'number',
   PLACEHOLDER = 'placeholder',
+  TABLENAME = 'tablename',
 }
 export interface Config {
   language?: string;
   indent?: string;
   reservedWordCase?: string;
   params?: Object;
+}
+export interface TokenizerConfig {
+  reservedWords: string[];
+  reservedToplevelWords: string[];
+  reservedNewlineWords: string[];
+  tableNamePrefixWords: string[];
+  stringTypes: string[];
+  openParens: string[];
+  closeParens: string[];
+  indexedPlaceholderTypes?: string[];
+  namedPlaceholderTypes: string[];
+  lineCommentTypes: string[];
+  specialWordChars?: string[];
 }
 
 export interface Token {
