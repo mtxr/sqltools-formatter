@@ -7,7 +7,10 @@ env:
   - HUSKY_SKIP_INSTALL=true
 
 install:
+  - yarn global add codecov
   - yarn
 script:
   - yarn run check
   - yarn run build
+after_success:
+  - codecov
