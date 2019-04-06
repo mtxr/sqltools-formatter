@@ -225,6 +225,31 @@ export default function behavesLikeSqlFormatter(language = undefined) {
         );
     });
 
+    it("formats SELECT query with different comments with \\r\\n as line ending. Issue #3", function() {
+      const result = format(
+          "SELECT\r\n" +
+          "/*\r\n" +
+          " * This is a block comment\r\n" +
+          " */\r\n" +
+          "* FROM\r\n" +
+          "-- This is another comment\r\n" +
+          "MyTable # One final comment\r\n" +
+          "WHERE 1 = 2;"
+      );
+      expect(result).toBe(
+          "SELECT\n" +
+          "  /*\n" +
+          "   * This is a block comment\n" +
+          "   */\n" +
+          "  *\n" +
+          "FROM\n" +
+          "  -- This is another comment\n" +
+          "  MyTable # One final comment\n" +
+          "WHERE\n" +
+          "  1 = 2;"
+      );
+  });
+
     it("formats simple INSERT query", function() {
         const result = format(
             "INSERT INTO Customers (ID, MoneyBalance, Address, City) VALUES (12,-123.4, 'Skagen 2111','Stv');"

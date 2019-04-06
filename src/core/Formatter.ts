@@ -94,7 +94,7 @@ export default class Formatter {
   }
 
   indentComment(comment) {
-    return comment.replace(/\n/g, '\n' + this.indentation.getIndent());
+    return comment.replace(/\r\n|\n/g, '\n' + this.indentation.getIndent());
   }
 
   formatToplevelReservedWord(token, query) {
