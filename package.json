@@ -1,6 +1,6 @@
 {
   "name": "@sqltools/formatter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Formats SQL queries. Part of SQLTools",
   "license": "MIT",
   "main": "lib/sqlFormatter.js",
