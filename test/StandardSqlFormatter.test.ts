@@ -186,6 +186,26 @@ describe("StandardSqlFormatter", function() {
         );
     });
 
+    it("recognizes %s placeholders", function() {
+      const result = sqlFormatter.format(
+          "SELECT %s, %s, %s, %s, %d, %f FROM table WHERE id = %d;"
+      );
+      expect(result).toBe(
+          "SELECT\n" +
+          "  %s,\n" +
+          "  %s,\n" +
+          "  %s,\n" +
+          "  %s,\n" +
+          "  %d,\n" +
+          "  %f\n" +
+          "FROM\n" +
+          "  table\n" +
+          "WHERE\n" +
+          "  id = %d;"
+      );
+  });
+
+
     it("formats query with GO batch separator", function() {
         const result = sqlFormatter.format("SELECT 1 GO SELECT 2", {
             params: ["first", "second", "third"]
