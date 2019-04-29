@@ -35,7 +35,7 @@ function getTokenizer(): Tokenizer {
       openParens: ['(', 'CASE'],
       closeParens: [')', 'END'],
       indexedPlaceholderTypes: ['?'],
-      namedPlaceholderTypes: ['@', ':'],
+      namedPlaceholderTypes: ['@', ':', '%'],
       lineCommentTypes: ['#', '--'],
       tableNamePrefixWords,
     });
