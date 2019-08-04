@@ -3,7 +3,6 @@ import behavesLikeSqlFormatter from "./behavesLikeSqlFormatter";
 
 describe("StandardSqlFormatter", function() {
     behavesLikeSqlFormatter();
-    behavesLikeSqlFormatter('sql');
 
     it("formats short CREATE TABLE", function() {
         expect(sqlFormatter.format(
@@ -81,6 +80,17 @@ describe("StandardSqlFormatter", function() {
             "  @[var name];"
         );
     });
+
+    it("recognizes mssql server @variables", function() {
+      const result = sqlFormatter.format(
+          "SELECT @@SERVERNAME AS servername, @@SERVER_NAME AS server_name"
+      );
+      expect(result).toBe(
+          "SELECT\n" +
+          "  @@SERVERNAME AS servername,\n" +
+          "  @@SERVER_NAME AS server_name"
+      );
+  });
 
     it("replaces @variables with param values", function() {
         const result = sqlFormatter.format(
@@ -413,12 +423,59 @@ describe("StandardSqlFormatter", function() {
     it("formats lonely semicolon", function() {
         expect(sqlFormatter.format(";")).toBe(";");
     });
+
+    it('Format query with cyrilic chars', () => {
+      expect(sqlFormatter.format(`select t.column1 Кириллица_cyrilic_alias
+      , t.column2 Latin_alias
+    from db_table t
+    where a >= some_date1  -- from
+    and a <  some_date2  -- to
+    and b >= some_date3  -- and
+    and b <  some_date4  -- where, select etc.
+    and 1 = 1`)).toEqual(
+    `select
+  t.column1 Кириллица_cyrilic_alias,
+  t.column2 Latin_alias
+from
+  db_table t
+where
+  a >= some_date1 -- from
+  and a < some_date2 -- to
+  and b >= some_date3 -- and
+  and b < some_date4 -- where, select etc.
+  and 1 = 1`);
+    });
+
+    it('Format query with dollar quoting', () => {
+      expect(sqlFormatter.format(`create function foo() returns void AS $$
+      begin
+      select true;
+      end;
+      $$ language PLPGSQL;`)).toEqual(
+`create function foo() returns void AS $$ begin
+select
+  true;
+end;
+$$ language PLPGSQL;`
+      );
+    });
+
+    it('Format query with dollar parameters', () => {
+      expect(sqlFormatter.format(`select * from a where id = $1`)).toEqual(
+`select
+  *
+from
+  a
+where
+  id = $1`
+      );
+    });
 });
 
 // @TODO improve this tests
 describe('StandardSqlFormatter tokenizer', function() {
   it('tokenizes tricky line comments', function() {
-    expect(sqlFormatter.tokenize('SELECT a#comment, here\nFROM h.b--comment')).toEqual([
+    expect(sqlFormatter.tokenize('SELECT a#comment, here\nFROM h.b--comment', {})).toEqual([
       { type: 'reserved-toplevel', value: 'SELECT' },
       { type: 'whitespace', value: ' ' },
       { type: 'word', value: 'a' },
@@ -431,7 +488,7 @@ describe('StandardSqlFormatter tokenizer', function() {
   });
 
   it('tokenizes tricky line comments using sql as language', function() {
-    expect(sqlFormatter.tokenize('SELECT a#comment, here\nFROM h.b--comment', { language: 'sql' })).toEqual([
+    expect(sqlFormatter.tokenize('SELECT a#comment, here\nFROM h.b--comment')).toEqual([
       { type: 'reserved-toplevel', value: 'SELECT' },
       { type: 'whitespace', value: ' ' },
       { type: 'word', value: 'a' },

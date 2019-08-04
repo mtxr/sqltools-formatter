@@ -4,11 +4,11 @@ import sqlFormatter from "../src/sqlFormatter";
  * Core tests for all SQL formatters
  * @param {String} language
  */
-export default function behavesLikeSqlFormatter(language = undefined) {
+export default function behavesLikeSqlFormatter() {
     it("uses given indent config for indention", function() {
         const result = sqlFormatter.format(
             "SELECT count(*),Column1 FROM Table1;",
-            {language, indent: "    "}
+            {indent: "    "}
         );
 
         expect(result).toBe(
@@ -21,7 +21,7 @@ export default function behavesLikeSqlFormatter(language = undefined) {
     });
 
     function format(query) {
-        return sqlFormatter.format(query, {language});
+        return sqlFormatter.format(query);
     }
 
     it("formats simple SET SCHEMA queries", function() {

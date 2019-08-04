@@ -69,11 +69,11 @@ export default class Formatter {
       } else if (token.type === TokenTypes.CLOSE_PAREN) {
         formattedQuery = this.formatClosingParentheses(token, formattedQuery);
       } else if (token.type === TokenTypes.PLACEHOLDER) {
-        formattedQuery = this.formatPlaceholder(token, formattedQuery);
+        formattedQuery = this.formatPlaceholderOrVariable(token, formattedQuery);
+      } else if (token.type === TokenTypes.SERVERVARIABLE) {
+        formattedQuery = this.formatPlaceholderOrVariable(token, formattedQuery);
       } else if (token.value === ',') {
         formattedQuery = this.formatComma(token, formattedQuery);
-      } else if (token.value === ':') {
-        formattedQuery = this.formatWithSpaceAfter(token, formattedQuery);
       } else if (token.value === '.') {
         formattedQuery = this.formatWithoutSpaces(token, formattedQuery);
       } else if (token.value === ';') {
@@ -147,7 +147,7 @@ export default class Formatter {
     }
   }
 
-  formatPlaceholder(token, query) {
+  formatPlaceholderOrVariable(token, query) {
     return query + this.params.get(token) + ' ';
   }
 
