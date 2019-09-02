@@ -2,7 +2,6 @@
 
 [![Build Status](https://img.shields.io/travis/com/mtxr/sqltools-formatter/master.svg?style=flat-square)](https://travis-ci.com/mtxr/sqltools-formatter)
 [![codecov](https://img.shields.io/codecov/c/gh/mtxr/sqltools-formatter.svg?style=flat-square)](https://codecov.io/gh/mtxr/sqltools-formatter)
-[![Greenkeeper badge](https://badges.greenkeeper.io/mtxr/sqltools-formatter.svg?style=flat-square)](https://greenkeeper.io/)
 [![NPM version](https://img.shields.io/npm/v/@sqltools/formatter.svg?style=flat-square)](https://npmjs.com/package/@sqltools/formatter)
 [![The MIT License](https://img.shields.io/badge/license-MIT-orange.svg?style=flat-square)](http://opensource.org/licenses/MIT)
 
