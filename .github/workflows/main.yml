@@ -27,7 +27,7 @@ jobs:
         yarn
 
     - name: test & build
-      env:
+    - env:
         HUSKY_SKIP_INSTALL: "true"
       run: |
         yarn run check
