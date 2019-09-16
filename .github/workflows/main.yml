@@ -24,7 +24,6 @@ jobs:
     - env:
         HUSKY_SKIP_INSTALL: "true"
       run: |
-        yarn global add codecov
         yarn
 
     - name: test & build
@@ -40,4 +39,5 @@ jobs:
       env:
         HUSKY_SKIP_INSTALL: "true"
       run: |
-        $(yarn bin)/codecov
+        yarn global add codecov
+        codecov
