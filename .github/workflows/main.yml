@@ -35,9 +35,6 @@ jobs:
         echo ">>> Run sample integration test"
         yarn run build
 
-    - name: upload coverage
-      env:
-        HUSKY_SKIP_INSTALL: "true"
-      run: |
-        yarn global add codecov
-        codecov
+    - uses: codecov/codecov-action@v1.0.2
+      with:
+        token: ${{secrets.CODECOV_TOKEN}} #required
