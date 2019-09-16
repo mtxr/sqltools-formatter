@@ -40,4 +40,4 @@ jobs:
       env:
         HUSKY_SKIP_INSTALL: "true"
       run: |
-        codecov
+        $(yarn bin)/codecov
