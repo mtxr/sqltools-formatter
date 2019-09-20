@@ -124,7 +124,7 @@ export default class Formatter {
     // Take out the preceding space unless there was whitespace there in the original query
     // or another opening parens or line comment
     const preserveWhitespaceFor = [TokenTypes.WHITESPACE, TokenTypes.OPEN_PAREN, TokenTypes.LINE_COMMENT];
-    if (!preserveWhitespaceFor.includes(this.previousToken().type)) {
+    if (!preserveWhitespaceFor.includes(this.previousToken().type as any)) {
       query = trimEnd(query);
     }
     query += token.value;

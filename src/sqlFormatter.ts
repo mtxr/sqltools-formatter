@@ -24,7 +24,7 @@ export default {
    * @param {Config} cfg
    * @return {Token[]}
    */
-  tokenize: (query: string, cfg: Config = {}): Token[] => {
-    return new StandardSqlFormatter(cfg).tokenize(query);
+  tokenize: (query: string, returnQueries: boolean = false, cfg: Config = {}): Token[] => {
+    return new StandardSqlFormatter(cfg).tokenize(query, returnQueries);
   },
 };

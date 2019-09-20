@@ -20,8 +20,8 @@ export default class StandardSqlFormatter {
     return new Formatter(this.cfg, getTokenizer()).format(query);
   }
 
-  tokenize(query): Token[] {
-    return getTokenizer().tokenize(query);
+  tokenize(query, returnQueries: boolean = false): Token[] {
+    return getTokenizer().tokenize(query, returnQueries);
   }
 }
 

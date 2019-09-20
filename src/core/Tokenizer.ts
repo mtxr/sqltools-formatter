@@ -49,7 +49,7 @@ export default class Tokenizer {
     this.TABLE_NAME_PREFIX_REGEX = this.createReservedWordRegex(cfg.tableNamePrefixWords);
 
     this.WORD_REGEX = new RegExp(`^([${wordUTF8}]+)`);
-    this.TABLE_NAME_REGEX = new RegExp(`^([${wordUTF8}][${wordUTF8}\\.]*|[\\[\`][${wordUTF8}][${wordUTF8}\\. \\-]*[\\]\`])`, 'i');
+    this.TABLE_NAME_REGEX = new RegExp(`^([${wordUTF8}][${wordUTF8}\\. \\-]*|[\\[\`][${wordUTF8}][${wordUTF8}\\. \\-]*[\\]\`])`, 'i');
     this.STRING_REGEX = this.createStringRegex(cfg.stringTypes);
 
     this.OPEN_PAREN_REGEX = this.createParenRegex(cfg.openParens);
@@ -123,23 +123,54 @@ export default class Tokenizer {
    *  @return {string} token.type
    *  @return {string} token.value
    */
-  tokenize(input: string): Token[] {
+  tokenize(input: string, returnQueries: boolean = false): Token[] {
     const tokens = [];
-    let token: Token;
+    const queries: Token[] = [{
+      childs: [],
+      parent: null,
+      type: 'Query',
+      value: null
+    }];
+    let currentParent: Token = queries[queries.length - 1];
 
+    let token: Token;
     // Keep processing the string until it is empty
     while (input.length) {
       // Get the next token and the token type
-      token = this.getNextToken(input, this.getPreviousToken(tokens), this.getPreviousToken(tokens, 1));
+      token = this.getNextToken(input, this.getPreviousToken(tokens));
       // Advance the string
       input = input.substring(token.value.length);
 
+      if (token.type === TokenTypes.WHITESPACE) continue;
+      token.parent = currentParent;
+      switch (token.type) {
+        case TokenTypes.QUERY_SEPARATOR:
+          queries.push({
+            childs: [],
+            parent: null,
+            type: 'Query',
+            value: null
+          });
+          currentParent = queries[queries.length - 1];
+          break;
+        case TokenTypes.TABLENAME_PREFIX:
+        case TokenTypes.RESERVED_TOPLEVEL:
+          currentParent = token;
+          if (token.parent && [TokenTypes.TABLENAME_PREFIX, TokenTypes.RESERVED_TOPLEVEL].includes(token.parent.type as any)) {
+            token.parent = token.parent.parent;
+          }
+          break;
+        default:
+          break;
+      }
+      token.parent.childs = token.parent.childs || [];
+      token.parent.childs.push(token)
       tokens.push(token);
     }
-    return tokens;
+    return returnQueries ? queries : tokens;
   }
 
-  getNextToken(input: string, tokenMinus1?: Token, tokenMinus2?: Token): Token {
+  getNextToken(input: string, tokenMinus1?: Token): Token {
     return (
       this.getWhitespaceToken(input) ||
       this.getCommentToken(input) ||
@@ -150,7 +181,7 @@ export default class Tokenizer {
       this.getPlaceholderToken(input) ||
       this.getNumberToken(input) ||
       this.getReservedWordToken(input, tokenMinus1) ||
-      this.getTableNameToken(input, tokenMinus1, tokenMinus2) ||
+      this.getTableNameToken(input, tokenMinus1) ||
       this.getWordToken(input) ||
       this.getQuerySeparatorToken(input) ||
       this.getOperatorToken(input)
@@ -297,11 +328,8 @@ export default class Tokenizer {
     );
   }
 
-  getTableNameToken(input, tokenMinus1, tokenMinus2) {
-    if (tokenMinus1 && tokenMinus1.value && tokenMinus1.value.trim() !== '') {
-      return;
-    }
-    if (tokenMinus2 && tokenMinus2.value && tokenMinus2.type !== TokenTypes.TABLENAME_PREFIX) {
+  getTableNameToken(input, tokenMinus1) {
+    if (tokenMinus1 && tokenMinus1.value && tokenMinus1.type !== TokenTypes.TABLENAME_PREFIX) {
       return;
     }
 
@@ -356,7 +384,7 @@ export default class Tokenizer {
     const matches = input.match(regex);
 
     if (matches) {
-      return { type, value: matches[1] };
+      return { type, value: matches[1], childs: [] };
     }
   }
 

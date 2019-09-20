@@ -39,7 +39,9 @@ export interface TokenizerConfig {
 }
 
 export interface Token {
-  type: TokenTypes;
+  type: TokenTypes | 'Query';
   value: string;
   key?: string;
+  childs?: Token[];
+  parent?: Token;
 }
