@@ -376,6 +376,7 @@ const reservedNewlineWords = [
   'OR',
   'OUTER APPLY',
   'OUTER JOIN',
+  'RENAME',
   'RIGHT JOIN',
   'RIGHT OUTER JOIN',
   'WHEN',

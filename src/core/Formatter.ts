@@ -55,6 +55,8 @@ export default class Formatter {
         formattedQuery = this.formatLineComment(token, formattedQuery);
       } else if (token.type === TokenTypes.BLOCK_COMMENT) {
         formattedQuery = this.formatBlockComment(token, formattedQuery);
+      } else if (token.type === TokenTypes.TABLENAME_PREFIX) {
+        formattedQuery = this.formatTablePrefix(token, formattedQuery);
       } else if (token.type === TokenTypes.RESERVED_TOPLEVEL) {
         formattedQuery = this.formatToplevelReservedWord(token, formattedQuery);
         this.previousReservedWord = token;
@@ -76,7 +78,7 @@ export default class Formatter {
         formattedQuery = this.formatComma(token, formattedQuery);
       } else if (token.value === '.') {
         formattedQuery = this.formatWithoutSpaces(token, formattedQuery);
-      } else if (token.value === ';') {
+      } else if (token.value === ';' || token.type === TokenTypes.QUERY_SEPARATOR ) {
         formattedQuery = this.formatQuerySeparator(token, formattedQuery);
       } else {
         formattedQuery = this.formatWithSpaces(token, formattedQuery);
@@ -176,8 +178,18 @@ export default class Formatter {
     return query + token.value + ' ';
   }
 
+  formatTablePrefix(token, query) {
+    this.indentation.decreaseTopLevel();
+
+    query = this.addNewline(query);
+
+    this.indentation.increaseToplevel();
+
+    return query + this.equalizeWhitespace(this.reservedWord(token.value)) + ' ';
+  }
+
   formatQuerySeparator(token, query) {
-    return this.trimTrailingWhitespace(query) + token.value + '\n';
+    return this.trimTrailingWhitespace(query) + trimEnd(token.value) + '\n';
   }
 
   addNewline(query) {

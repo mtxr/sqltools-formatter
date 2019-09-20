@@ -9,6 +9,7 @@ export enum TokenTypes {
   RESERVED_TOPLEVEL = 'reserved-toplevel',
   RESERVED_NEWLINE = 'reserved-newline',
   OPERATOR = 'operator',
+  QUERY_SEPARATOR = 'query-separator',
   OPEN_PAREN = 'open-paren',
   CLOSE_PAREN = 'close-paren',
   LINE_COMMENT = 'line-comment',
@@ -16,6 +17,7 @@ export enum TokenTypes {
   NUMBER = 'number',
   PLACEHOLDER = 'placeholder',
   SERVERVARIABLE = 'servervariable',
+  TABLENAME_PREFIX = 'tablename-prefix',
   TABLENAME = 'tablename',
 }
 export interface Config {

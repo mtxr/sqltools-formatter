@@ -15,8 +15,7 @@ export default function behavesLikeSqlFormatter() {
             "SELECT\n" +
             "    count(*),\n" +
             "    Column1\n" +
-            "FROM\n" +
-            "    Table1;"
+            "FROM Table1;"
         );
     });
 
@@ -40,8 +39,7 @@ export default function behavesLikeSqlFormatter() {
             "SELECT\n" +
             "  count(*),\n" +
             "  Column1\n" +
-            "FROM\n" +
-            "  Table1;"
+            "FROM Table1;"
         );
     });
 
@@ -55,8 +53,7 @@ export default function behavesLikeSqlFormatter() {
             "  ROUND(age / 7) field1,\n" +
             "  18 + 20 AS field2,\n" +
             "  'some string'\n" +
-            "FROM\n" +
-            "  foo;"
+            "FROM foo;"
         );
     });
 
@@ -68,8 +65,7 @@ export default function behavesLikeSqlFormatter() {
         expect(result).toBe(
             "SELECT\n" +
             "  *\n" +
-            "FROM\n" +
-            "  foo\n" +
+            "FROM foo\n" +
             "WHERE\n" +
             "  Column1 = 'testing'\n" +
             "  AND (\n" +
@@ -89,8 +85,7 @@ export default function behavesLikeSqlFormatter() {
         expect(result).toBe(
             "SELECT\n" +
             "  *\n" +
-            "FROM\n" +
-            "  foo\n" +
+            "FROM foo\n" +
             "WHERE\n" +
             "  name = 'John'\n" +
             "GROUP BY\n" +
@@ -154,9 +149,8 @@ export default function behavesLikeSqlFormatter() {
         expect(result).toBe(
             "select\n" +
             "  distinct *\n" +
-            "frOM\n" +
-            "  foo\n" +
-            "  left join bar\n" +
+            "frOM foo\n" +
+            "left join bar\n" +
             "WHERe\n" +
             "  a > 1\n" +
             "  and b = 3"
@@ -171,12 +165,10 @@ export default function behavesLikeSqlFormatter() {
             "SELECT\n" +
             "  *,\n" +
             "  SUM(*) AS sum\n" +
-            "FROM\n" +
-            "  (\n" +
+            "FROM (\n" +
             "    SELECT\n" +
             "      *\n" +
-            "    FROM\n" +
-            "      Posts\n" +
+            "    FROM Posts\n" +
             "    LIMIT\n" +
             "      30\n" +
             "  )\n" +
@@ -194,9 +186,8 @@ export default function behavesLikeSqlFormatter() {
             "SELECT\n" +
             "  customer_id.from,\n" +
             "  COUNT(order_id) AS total\n" +
-            "FROM\n" +
-            "  customers\n" +
-            "  INNER JOIN orders ON customers.customer_id = orders.customer_id;"
+            "FROM customers\n" +
+            "INNER JOIN orders ON customers.customer_id = orders.customer_id;"
         );
     });
 
@@ -217,8 +208,7 @@ export default function behavesLikeSqlFormatter() {
             "   * This is a block comment\n" +
             "   */\n" +
             "  *\n" +
-            "FROM\n" +
-            "  -- This is another comment\n" +
+            "FROM -- This is another comment\n" +
             "  MyTable # One final comment\n" +
             "WHERE\n" +
             "  1 = 2;"
@@ -242,8 +232,7 @@ export default function behavesLikeSqlFormatter() {
           "   * This is a block comment\n" +
           "   */\n" +
           "  *\n" +
-          "FROM\n" +
-          "  -- This is another comment\n" +
+          "FROM -- This is another comment\n" +
           "  MyTable # One final comment\n" +
           "WHERE\n" +
           "  1 = 2;"
@@ -255,8 +244,7 @@ export default function behavesLikeSqlFormatter() {
             "INSERT INTO Customers (ID, MoneyBalance, Address, City) VALUES (12,-123.4, 'Skagen 2111','Stv');"
         );
         expect(result).toBe(
-            "INSERT INTO\n" +
-            "  Customers (ID, MoneyBalance, Address, City)\n" +
+            "INSERT INTO Customers (ID, MoneyBalance, Address, City)\n" +
             "VALUES\n" +
             "  (12, -123.4, 'Skagen 2111', 'Stv');"
         );
@@ -279,8 +267,7 @@ export default function behavesLikeSqlFormatter() {
             "IF (dq.id_discounter_shopping = 2, 'amount', 'percentage') FROM foo);"
         );
         expect(result).toBe(
-            "INSERT INTO\n" +
-            "  some_table (\n" +
+            "INSERT INTO some_table (\n" +
             "    id_product,\n" +
             "    id_shop,\n" +
             "    id_currency,\n" +
@@ -298,8 +285,7 @@ export default function behavesLikeSqlFormatter() {
             "        'amount',\n" +
             "        'percentage'\n" +
             "      )\n" +
-            "    FROM\n" +
-            "      foo\n" +
+            "    FROM foo\n" +
             "  );"
         );
     });
@@ -309,8 +295,7 @@ export default function behavesLikeSqlFormatter() {
             "UPDATE Customers SET ContactName='Alfred Schmidt', City='Hamburg' WHERE CustomerName='Alfreds Futterkiste';"
         );
         expect(result).toBe(
-            "UPDATE\n" +
-            "  Customers\n" +
+            "UPDATE Customers\n" +
             "SET\n" +
             "  ContactName = 'Alfred Schmidt',\n" +
             "  City = 'Hamburg'\n" +
@@ -324,8 +309,7 @@ export default function behavesLikeSqlFormatter() {
             "DELETE FROM Customers WHERE CustomerName='Alfred' AND Phone=5002132;"
         );
         expect(result).toBe(
-            "DELETE FROM\n" +
-            "  Customers\n" +
+            "DELETE FROM Customers\n" +
             "WHERE\n" +
             "  CustomerName = 'Alfred'\n" +
             "  AND Phone = 5002132;"
@@ -363,16 +347,13 @@ export default function behavesLikeSqlFormatter() {
             "UPDATE customers SET totalorders = ordersummary.total  FROM ( SELECT * FROM bank) AS ordersummary"
         );
         expect(result).toBe(
-            "UPDATE\n" +
-            "  customers\n" +
+            "UPDATE customers\n" +
             "SET\n" +
             "  totalorders = ordersummary.total\n" +
-            "FROM\n" +
-            "  (\n" +
+            "FROM (\n" +
             "    SELECT\n" +
             "      *\n" +
-            "    FROM\n" +
-            "      bank\n" +
+            "    FROM bank\n" +
             "  ) AS ordersummary"
         );
     });
@@ -382,9 +363,8 @@ export default function behavesLikeSqlFormatter() {
         expect(result).toBe(
             "SELECT\n" +
             "  *\n" +
-            "FROM\n" +
-            "  foo\n" +
-            "  LEFT OUTER JOIN bar\n" +
+            "FROM foo\n" +
+            "LEFT OUTER JOIN bar\n" +
             "ORDER BY\n" +
             "  blah"
         );
@@ -481,13 +461,11 @@ export default function behavesLikeSqlFormatter() {
             "SELECT\n" +
             "  count(*),\n" +
             "  Column1\n" +
-            "FROM\n" +
-            "  Table1;\n" +
+            "FROM Table1;\n" +
             "SELECT\n" +
             "  count(*),\n" +
             "  Column1\n" +
-            "FROM\n" +
-            "  Table2;"
+            "FROM Table2;"
         );
     });
 
@@ -501,13 +479,11 @@ export default function behavesLikeSqlFormatter() {
             "select\n" +
             "  count(*),\n" +
             "  Column1\n" +
-            "FROM\n" +
-            "  Table1;\n" +
+            "FROM Table1;\n" +
             "SELECT\n" +
             "  count(*),\n" +
             "  Column1\n" +
-            "from\n" +
-            "  Table2;"
+            "from Table2;"
         );
     });
 
@@ -517,13 +493,11 @@ export default function behavesLikeSqlFormatter() {
             "SELECT\n" +
             "  count(*),\n" +
             "  column1\n" +
-            "FROM\n" +
-            "  table1;\n" +
+            "FROM table1;\n" +
             "SELECT\n" +
             "  count(*),\n" +
             "  column1\n" +
-            "FROM\n" +
-            "  table2;"
+            "FROM table2;"
         );
     });
 
@@ -533,13 +507,11 @@ export default function behavesLikeSqlFormatter() {
             "select\n" +
             "  count(*),\n" +
             "  column1\n" +
-            "from\n" +
-            "  table1;\n" +
+            "from table1;\n" +
             "select\n" +
             "  count(*),\n" +
             "  column1\n" +
-            "from\n" +
-            "  table2;"
+            "from table2;"
         );
     });
 }

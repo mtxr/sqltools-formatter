@@ -30,8 +30,7 @@ describe("StandardSqlFormatter", function() {
             "INSERT Customers (ID, MoneyBalance, Address, City) VALUES (12,-123.4, 'Skagen 2111','Stv');"
         );
         expect(result).toBe(
-            "INSERT\n" +
-            "  Customers (ID, MoneyBalance, Address, City)\n" +
+            "INSERT Customers (ID, MoneyBalance, Address, City)\n" +
             "VALUES\n" +
             "  (12, -123.4, 'Skagen 2111', 'Stv');"
         );
@@ -42,8 +41,7 @@ describe("StandardSqlFormatter", function() {
             "ALTER TABLE supplier MODIFY supplier_name char(100) NOT NULL;"
         );
         expect(result).toBe(
-            "ALTER TABLE\n" +
-            "  supplier\n" +
+            "ALTER TABLE supplier\n" +
             "MODIFY\n" +
             "  supplier_name char(100) NOT NULL;"
         );
@@ -54,8 +52,7 @@ describe("StandardSqlFormatter", function() {
             "ALTER TABLE supplier ALTER COLUMN supplier_name VARCHAR(100) NOT NULL;"
         );
         expect(result).toBe(
-            "ALTER TABLE\n" +
-            "  supplier\n" +
+            "ALTER TABLE supplier\n" +
             "ALTER COLUMN\n" +
             "  supplier_name VARCHAR(100) NOT NULL;"
         );
@@ -208,8 +205,7 @@ describe("StandardSqlFormatter", function() {
           "  %s,\n" +
           "  %d,\n" +
           "  %f\n" +
-          "FROM\n" +
-          "  table\n" +
+          "FROM table\n" +
           "WHERE\n" +
           "  id = %d;"
       );
@@ -235,9 +231,8 @@ describe("StandardSqlFormatter", function() {
             "SELECT\n" +
             "  a,\n" +
             "  b\n" +
-            "FROM\n" +
-            "  t\n" +
-            "  CROSS JOIN t2 on t.id = t2.id_t"
+            "FROM t\n" +
+            "CROSS JOIN t2 on t.id = t2.id_t"
         );
     });
 
@@ -247,8 +242,7 @@ describe("StandardSqlFormatter", function() {
             "SELECT\n" +
             "  a,\n" +
             "  b\n" +
-            "FROM\n" +
-            "  t\n" +
+            "FROM t\n" +
             "  CROSS APPLY fn(t.id)"
         );
     });
@@ -259,8 +253,7 @@ describe("StandardSqlFormatter", function() {
             "SELECT\n" +
             "  N,\n" +
             "  M\n" +
-            "FROM\n" +
-            "  t"
+            "FROM t"
         );
     });
 
@@ -278,8 +271,7 @@ describe("StandardSqlFormatter", function() {
             "SELECT\n" +
             "  a,\n" +
             "  b\n" +
-            "FROM\n" +
-            "  t\n" +
+            "FROM t\n" +
             "  OUTER APPLY fn(t.id)"
         );
     });
@@ -326,8 +318,7 @@ describe("StandardSqlFormatter", function() {
             "    WHEN 'two' THEN 2\n" +
             "    ELSE 3\n" +
             "  END\n" +
-            "FROM\n" +
-            "  table"
+            "FROM table"
         );
     });
 
@@ -370,8 +361,7 @@ describe("StandardSqlFormatter", function() {
             "SELECT\n" +
             "  CASEDATE,\n" +
             "  ENDDATE\n" +
-            "FROM\n" +
-            "  table1;"
+            "FROM table1;"
         );
     });
 
@@ -379,8 +369,7 @@ describe("StandardSqlFormatter", function() {
         expect(sqlFormatter.format("SELECT a#comment, here\nFROM b--comment")).toBe(
             "SELECT\n" +
             "  a #comment, here\n" +
-            "FROM\n" +
-            "  b --comment"
+            "FROM b --comment"
         );
     });
 
@@ -388,8 +377,7 @@ describe("StandardSqlFormatter", function() {
         expect(sqlFormatter.format("SELECT a FROM b\n--comment\n;")).toBe(
             "SELECT\n" +
             "  a\n" +
-            "FROM\n" +
-            "  b --comment\n" +
+            "FROM b --comment\n" +
             ";"
         );
     });
@@ -436,14 +424,21 @@ describe("StandardSqlFormatter", function() {
     `select
   t.column1 Кириллица_cyrilic_alias,
   t.column2 Latin_alias
-from
-  db_table t
+from db_table t
 where
   a >= some_date1 -- from
   and a < some_date2 -- to
   and b >= some_date3 -- and
   and b < some_date4 -- where, select etc.
   and 1 = 1`);
+    });
+
+    it('Format query with japanese chars', () => {
+      expect(sqlFormatter.format(`select * from 注文 inner join 注文明細 on 注文.注文id = 注文明細.注文id;`)).toEqual(
+`select
+  *
+from 注文
+inner join 注文明細 on 注文.注文id = 注文明細.注文id;`);
     });
 
     it('Format query with dollar quoting', () => {
@@ -456,19 +451,16 @@ where
 select
   true;
 end;
-$$ language PLPGSQL;`
-      );
+$$ language PLPGSQL;`);
     });
 
     it('Format query with dollar parameters', () => {
       expect(sqlFormatter.format(`select * from a where id = $1`)).toEqual(
 `select
   *
-from
-  a
+from a
 where
-  id = $1`
-      );
+  id = $1`);
     });
 });
 
@@ -480,7 +472,7 @@ describe('StandardSqlFormatter tokenizer', function() {
       { type: 'whitespace', value: ' ' },
       { type: 'word', value: 'a' },
       { type: 'line-comment', value: '#comment, here\n' },
-      { type: 'reserved-toplevel', value: 'FROM' },
+      { type: 'tablename-prefix', value: 'FROM' },
       { type: 'whitespace', value: ' ' },
       { type: 'tablename', value: 'h.b' },
       { type: 'line-comment', value: '--comment' },
@@ -493,7 +485,7 @@ describe('StandardSqlFormatter tokenizer', function() {
       { type: 'whitespace', value: ' ' },
       { type: 'word', value: 'a' },
       { type: 'line-comment', value: '#comment, here\n' },
-      { type: 'reserved-toplevel', value: 'FROM' },
+      { type: 'tablename-prefix', value: 'FROM' },
       { type: 'whitespace', value: ' ' },
       { type: 'tablename', value: 'h.b' },
       { type: 'line-comment', value: '--comment' },
@@ -510,7 +502,7 @@ describe('StandardSqlFormatter tokenizer', function() {
       { type: 'whitespace', value: ' ' },
       { type: 'word', value: 'b' },
       { type: 'whitespace', value: ' ' },
-      { type: 'reserved-toplevel', value: 'FROM' },
+      { type: 'tablename-prefix', value: 'FROM' },
       { type: 'whitespace', value: ' ' },
       { type: 'tablename', value: 't' },
       { type: 'whitespace', value: ' ' },
