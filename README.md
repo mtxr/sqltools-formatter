@@ -1,3 +1,6 @@
+
+### THIS PROJECT HAS BEEN MOVED TO https://github.com/mtxr/vscode-sqltools/tree/master/packages/formatter
+
 # SQLTools Formatter
 
 [![Build Status](https://github.com/mtxr/sqltools-formatter/workflows/Node%20CI/badge.svg)](https://github.com/mtxr/sqltools-formatter/actions)
